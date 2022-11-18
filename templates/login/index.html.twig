@@ -1,29 +1,38 @@
-{# templates/login/index.html.twig #} {% extends 'base.html.twig' %} {% block
-body %} {% if error %}
-<div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-{% endif %}
+{# templates/login/index.html.twig #}
+{% extends 'base.html.twig' %}
+{% block body %}
+  {% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+  {% endif %}
 
-<form action="{{ path('app_login') }}" method="post">
-  <label for="username">Email:</label>
-  <input
-    type="text"
-    id="username"
-    name="_username"
-    value="{{ last_username }}"
-  />
+  <div class="row justify-content-center">
+    <div class="col">
+      <h1 class="text-center m-3">Login</h1>
 
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="_password" />
+      <form action="{{ path('trainer_license') }}" method="post" class="w-50 m-auto">
+        <div class="mb-4">
+          <label class="form-label" for="username">Email:</label>
+          <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}" required />
+        </div>
 
-  <input
-    type="hidden"
-    name="_csrf_token"
-    value="{{ csrf_token('authenticate') }}"
-  />
+        <div class="mb-4">
+          <label class="form-label" for="password">Password:</label>
+          <input class="form-control" type="password" id="password" name="_password" required />
+        </div>
 
-  {# If you want to control the URL the user is redirected to on success
-  <input type="hidden" name="_target_path" value="/account" /> #}
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
 
-  <button type="submit">login</button>
-</form>
+        {# If you want to control the URL the user is redirected to on success
+        <input type="hidden" name="_target_path" value="/account" /> #}
+
+        <div class="text-center mb-4">
+          <button type="submit" class="btn btn-dark w-100">Login</button>
+        </div>
+      </form>
+
+      <p class="text-center">
+        You don't have an accout ? <a href="/register">Register</a>
+      </p>
+    </div>
+  </div>
 {% endblock %}
