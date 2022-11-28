@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <h1>{{ pokemon.name }}'s Page</h1>
+
+  <div class="container text-center">
+    <div class="row border border-dark">
+      <div class="col">
+        <p>id</p>
+      </div>
+      <div class="col">
+        <p>{{ pokemon.pokeId }}</p>
+      </div>
+    </div>
+
+    <div class="row border border-dark">
+      <div class="col">
+        <p>Weight</p>
+      </div>
+      <div class="col">
+        <p>{{ pokemon.weight }}</p>
+      </div>
+    </div>
+
+    <div class="row border border-dark">
+      <div class="col">
+        <p>Order</p>
+      </div>
+      <div class="col">
+        <p>{{ pokemon.pokeOrder }}</p>
+      </div>
+    </div>
+
+    <div class="row border border-dark">
+      <div class="col">
+        <p>Base experience</p>
+      </div>
+      <div class="col">
+        <p>{{ pokemon.baseExperience }}</p>
+      </div>
+    </div>
+
+    <div class="row border border-dark">
+      <div class="col">
+        <p>Types</p>
+      </div>
+      <div class="col">
+        <div class="row">
+          {% for type in pokemon.types %}
+            <div class="col">
+              <p>{{ type.type.name }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="row border border-dark">
+      <div class="col">
+        <p>Stats</p>
+      </div>
+      <div class="col">
+        {% for stat in pokemon.stats %}
+          <div class="row border border-dark">
+            <div class="col">
+              <p>{{ stat.stat.name }}</p>
+            </div>
+            <div class="col">
+              <p>{{ stat.base_stat }}</p>
+            </div>
+            <div class="col">
+              {% if stat.effort > 0 %}
+                <p>Effort : {{ stat.effort }}</p>
+              {% else %}
+                <p>X</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row border border-dark">
+      <div class="col">
+        <p>Species</p>
+      </div>
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <p>{{ pokemon.species.name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
