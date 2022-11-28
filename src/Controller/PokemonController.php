@@ -41,9 +41,12 @@ class PokemonController extends AbstractController
         $pokemon->setStats($content["stats"]);
         $pokemon->setSpecies($content["species"]);
 
+        $img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" . $pokemon->getPokeId() . ".png";
+
         return $this->render('pokemon/index.html.twig', [
             'controller_name' => 'PokemonController',
             'pokemon' => $pokemon,
+            'imgUrl' => $img,
         ]);
     }
 }
