@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Pokemon;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -106,7 +107,7 @@ class PokemonController extends AbstractController
     }
 
     #[Route('/pokemon/{name}', name: 'one_pokemon')]
-    public function getOnePokemonFromApi(string $name): Response
+    public function getOnePokemonFromApi(ManagerRegistry $doctrine, string $name = "mew"): Response
     {
         $response = $this->client->request(
             'GET',
@@ -118,21 +119,30 @@ class PokemonController extends AbstractController
         $content = $response->getContent();
         $content = $response->toArray();
 
-        if ($name) {
-            $pokemon = new Pokemon();
+        $pokemon = new Pokemon();
 
-            $pokemon->setPokeId($content["id"]);
-            $pokemon->setName($content["name"]);
-            $pokemon->setWeight($content["weight"]);
-            $pokemon->setPokeOrder($content["order"]);
-            $pokemon->setBaseExperience($content["base_experience"] || 0);
-            $pokemon->setTypes($content["types"]);
-            $pokemon->setStats($content["stats"]);
-            $pokemon->setSpecies($content["species"]);
+        $pokemon->setPokeId($content["id"]);
+        $pokemon->setName($content["name"]);
+        $pokemon->setWeight($content["weight"]);
+        $pokemon->setPokeOrder($content["order"]);
+        $pokemon->setBaseExperience($content["base_experience"] || 0);
+        $pokemon->setTypes($content["types"]);
+        $pokemon->setStats($content["stats"]);
+        $pokemon->setSpecies($content["species"]);
 
-            $img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" . $pokemon->getPokeId() . ".png";
-        }
+        $img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" . $pokemon->getPokeId() . ".png";
 
+        // Send pokemon to db
+        // $entityManager = $doctrine->getManager();
+
+        // $product = new Team();
+        // $product->setList([1, 4, 7]);
+
+        // // tell Doctrine you want to (eventually) save the Product (no queries yet)
+        // $entityManager->persist($product);
+
+        // // actually executes the queries (i.e. the INSERT query)
+        // $entityManager->flush();
 
         return $this->render('pokemon/index.html.twig', [
             'controller_name' => 'PokemonController',
