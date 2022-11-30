@@ -1,0 +1,12 @@
+.pokemon-list {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 30px;
+}
+.pokemon-list .card {
+  margin: 0 auto;
+}
+.pokemon-list .card a {
+  text-transform: capitalize;
+  text-decoration: none;
+}/*# sourceMappingURL=main.css.map */
