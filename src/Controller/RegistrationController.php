@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
             );
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('trainer_license');
+            return $this->redirectToRoute('pokemons');
         }
 
         return $this->render('registration/register.html.twig', [

@@ -1,11 +1,3 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
-
-trainer_license:
-    path: /trainer/license
-    controller: App\Controller\TrainerController::number
-
-posts:
-    path: /api/posts
-    controller: App\Controller\ApiController::show
