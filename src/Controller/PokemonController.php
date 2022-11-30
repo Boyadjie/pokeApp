@@ -22,7 +22,7 @@ class PokemonController extends AbstractController
     {
         $response = $this->client->request(
             'GET',
-            'https://pokeapi.co/api/v2/pokemon/',
+            'https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0',
         );
 
         // $statusCode = $response->getStatusCode();
@@ -30,8 +30,8 @@ class PokemonController extends AbstractController
         $content = $response->getContent();
         $content = $response->toArray();
 
+        // Get all the pokemons formated with name and img associated
         $pokemonList = [];
-
         foreach ($content["results"] as $key => $value) {
             preg_match("/([^\/]+)(?=[^\/]*\/?$)/", $value["url"], $matches);
             $pokeId = $matches[0];
@@ -40,21 +40,68 @@ class PokemonController extends AbstractController
             array_push($pokemonList, ["name" => $value["name"], "img" => $img]);
         }
 
-        if (isset($_POST) && !empty($_POST)) {
-            $searchResult = [];
+
+        // -------------------------------
+        // Page Management ---------------
+        // -------------------------------
+
+        $pokemonPerPages = 54;
+        $maxPages = ceil(count($pokemonList) / $pokemonPerPages);
+        $pages = [];
+        for ($i = 1; $i <= $maxPages; $i++) {
+            array_push($pages, $i);
+        }
+
+        // Set the default display list with the 54 first pokemons
+        $displayList = [];
+        foreach ($pokemonList as $key => $value) {
+            if ($key >= 0 && $key < $pokemonPerPages) {
+                array_push($displayList, $value);
+            }
+        }
+
+        // Display the pokemons seperated by pages
+        if (isset($_GET) && !empty($_GET)) {
+            $displayList = [];
+            $pageNumber = intval($_GET["page"]);
+            $currentPage = $pageNumber;
+            $offset = ($pageNumber * $pokemonPerPages) - $pokemonPerPages;
+
             foreach ($pokemonList as $key => $value) {
-                $searchedValue = strtolower($_POST["search"]);
-                $isInName = strstr($value["name"], $searchedValue);
-                if ($isInName) {
-                    array_push($searchResult, $pokemonList[$key]);
+                if ($key >= $offset && $key < $offset + $pokemonPerPages) {
+                    array_push($displayList, $value);
                 }
             }
-            $pokemonList = $searchResult;
+        } else {
+            $currentPage = 1;
+        }
+
+        // -------------------------------
+        // Search System ---------------
+        // -------------------------------
+        if (isset($_POST) && !empty($_POST)) {
+            $searched = $_POST["search"];
+            if ($searched != "" || $searched != " ") {
+                $searchResult = [];
+                foreach ($pokemonList as $key => $value) {
+                    $searchedValue = strtolower($_POST["search"]);
+                    $isInName = strstr($value["name"], $searchedValue);
+                    if ($isInName) {
+                        array_push($searchResult, $pokemonList[$key]);
+                    }
+                }
+                $displayList = $searchResult;
+            }
+        } else {
+            $searched = "";
         }
 
         return $this->render('pokemon/search.html.twig', [
             'controller_name' => 'PokemonController',
-            'list' => $pokemonList,
+            'list' => $displayList,
+            'searched' => $searched,
+            'pages' => $pages,
+            'currentPage' => $currentPage,
         ]);
     }
 
@@ -78,7 +125,7 @@ class PokemonController extends AbstractController
             $pokemon->setName($content["name"]);
             $pokemon->setWeight($content["weight"]);
             $pokemon->setPokeOrder($content["order"]);
-            $pokemon->setBaseExperience($content["base_experience"]);
+            $pokemon->setBaseExperience($content["base_experience"] || 0);
             $pokemon->setTypes($content["types"]);
             $pokemon->setStats($content["stats"]);
             $pokemon->setSpecies($content["species"]);

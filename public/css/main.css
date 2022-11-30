@@ -9,4 +9,48 @@
 .pokemon-list .card a {
   text-transform: capitalize;
   text-decoration: none;
+}
+
+.search-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 30px;
+}
+.search-header #search-form {
+  text-align: center;
+}
+.search-header #search-form input {
+  padding: 5px 10px;
+  border: 2px solid #212529;
+  border-radius: 10px;
+}
+.search-header #search-form input#searchbar {
+  width: 260px;
+}
+.search-header #search-form input:not(#searchbar) {
+  background-color: #212529;
+  color: rgb(233, 233, 233);
+}
+.search-header #search-form a {
+  margin-left: 20px;
+  color: #212529;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+.pagination button {
+  border: none;
+  background: rgb(233, 233, 233);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.pagination button.current {
+  color: rgb(233, 233, 233);
+  background: #212529;
 }/*# sourceMappingURL=main.css.map */

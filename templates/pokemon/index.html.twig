@@ -4,7 +4,7 @@
   <h1>{{ pokemon.name }}'s Page</h1>
 
   <div class="container">
-    <img src="{{ imgUrl }}" alt="Pokemon Picture" />
+    <img src="{{ imgUrl }}" alt="Pokemon Picture" onerror="this.src='{{ asset('img/unknown.png') }}'" />
     <p>
       <b>Pokemon Id :</b> {{ pokemon.pokeId }}
     </p>

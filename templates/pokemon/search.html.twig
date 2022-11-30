@@ -1,19 +1,33 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  <h1>Search Page</h1>
+  <div class="search-header">
+    <h1>Pokemon</h1>
 
-  <form method="post">
-    <input type="search" name="search" placeholder="Search a pokemon by it's name" />
-    <input type="submit" value="submit" />
-    <a href="/pokemon">Reset Search</a>
-  </form>
+    <form id="search-form" method="post">
+      <input id="searchbar" type="search" name="search" placeholder="Type a name" value="{{ searched }}" />
+      <input type="submit" value="Search" />
+      <a href="/pokemon">Reset</a>
+    </form>
+  </div>
+
+  {% if searched == '' %}
+    <form class="pagination">
+      {% for page in pages %}
+        {% if currentPage == page %}
+          <button class="current" name="page" value="{{ page }}">{{ page }}</button>
+        {% else %}
+          <button name="page" value="{{ page }}">{{ page }}</button>
+        {% endif %}
+      {% endfor %}
+    </form>
+  {% endif %}
 
   <div class="text-center pokemon-list">
     {% for pokemon in list %}
       <div class="card" style="width: 10rem;">
         <a href="/pokemon/{{ pokemon.name }}">
-          <img src="{{ pokemon.img }}" class="card-img-top" alt="Picture of {{ pokemon.name }}" />
+          <img src="{{ pokemon.img }}" class="card-img-top" alt="Picture of {{ pokemon.name }}" onerror="this.src='{{ asset('img/unknown.png') }}'" />
           <div class="card-body">
             <h5 class="card-title">{{ pokemon.name }}</h5>
             {# <a href="#" class="btn btn-primary">Go somewhere</a> #}
@@ -22,4 +36,16 @@
       </div>
     {% endfor %}
   </div>
+
+  {% if searched == '' %}
+    <form class="pagination">
+      {% for page in pages %}
+        {% if currentPage == page %}
+          <button class="current" name="page" value="{{ page }}">{{ page }}</button>
+        {% else %}
+          <button name="page" value="{{ page }}">{{ page }}</button>
+        {% endif %}
+      {% endfor %}
+    </form>
+  {% endif %}
 {% endblock %}
