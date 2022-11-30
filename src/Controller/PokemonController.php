@@ -40,6 +40,18 @@ class PokemonController extends AbstractController
             array_push($pokemonList, ["name" => $value["name"], "img" => $img]);
         }
 
+        if (isset($_POST) && !empty($_POST)) {
+            $searchResult = [];
+            foreach ($pokemonList as $key => $value) {
+                $searchedValue = strtolower($_POST["search"]);
+                $isInName = strstr($value["name"], $searchedValue);
+                if ($isInName) {
+                    array_push($searchResult, $pokemonList[$key]);
+                }
+            }
+            $pokemonList = $searchResult;
+        }
+
         return $this->render('pokemon/search.html.twig', [
             'controller_name' => 'PokemonController',
             'list' => $pokemonList,
