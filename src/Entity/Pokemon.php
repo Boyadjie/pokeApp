@@ -38,6 +38,9 @@ class Pokemon
     #[ORM\Column]
     private ?int $base_experience = null;
 
+    #[ORM\Column(length: 300, nullable: true)]
+    private ?string $img = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,18 @@ class Pokemon
     public function setBaseExperience(int $base_experience): self
     {
         $this->base_experience = $base_experience;
+
+        return $this;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function setImg(?string $img): self
+    {
+        $this->img = $img;
 
         return $this;
     }

@@ -2,4 +2,21 @@
 
 {% block body %}
   <h1>My Team</h1>
+  <div class="text-center pokemon-list">
+    {% for id, pokemon in team %}
+      <div class="card" style="width: 10rem;">
+        <a href="/pokemon/{{ pokemon.name }}">
+          <img src="{{ pokemon.img }}" class="card-img-top" alt="Picture of {{ pokemon.name }}" onerror="this.src='{{ asset('img/unknown.png') }}'" />
+          <div class="card-body">
+            <h5 class="card-title">{{ pokemon.name }}</h5>
+
+            <form method="post">
+              <button name="removePokemonId" value="{{ id }}">Remove From Team</button>
+            </form>
+            {# <a href="#" class="btn btn-primary">Go somewhere</a> #}
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}

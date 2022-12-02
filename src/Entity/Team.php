@@ -60,4 +60,10 @@ class Team
         }
         return $this;
     }
+
+    public function removePokemonIdFromTeam($id): self
+    {
+        unset($this->list[$id]);
+        return $this;
+    }
 }

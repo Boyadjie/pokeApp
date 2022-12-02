@@ -136,46 +136,43 @@ class PokemonController extends AbstractController
         $pokemon->setSpecies($content["species"]);
 
         $img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" . $pokemon->getPokeId() . ".png";
+        $pokemon->setImg($img);
 
         if (isset($_POST) && !empty($_POST)) {
 
-            $idToAdd = $pokemon->getPokeId();
+            $pokeId = $pokemon->getPokeId();
+            $pokemonsRepository = $doctrine->getRepository(Pokemon::class);
+            $teamsRepository = $doctrine->getRepository(Team::class);
+            $entityManager = $doctrine->getManager();
 
-            if (intval($_POST["pokemonId"]) === $idToAdd) {
 
-                $pokemonsRepository = $doctrine->getRepository(Pokemon::class);
+            if (intval($_POST["addPokemonId"]) === $pokeId) {
+
                 $existingPokemon = $pokemonsRepository->findOneBy([
-                    'pokeId' => $idToAdd,
+                    'pokeId' => $pokeId,
                 ]);
 
                 if (!$existingPokemon) {
                     // Send pokemon to db
-                    $entityManager = $doctrine->getManager();
-
                     $pokemonToSend = $pokemon;
-                    // tell Doctrine you want to (eventually) save the Product (no queries yet)
                     $entityManager->persist($pokemonToSend);
-                    // actually executes the queries (i.e. the INSERT query)
                     $entityManager->flush();
                 }
 
                 // Add pokemon id to team
-                $teamsRepository = $doctrine->getRepository(Team::class);
-                // $teams = $teamsRepository->findAll();
+                // Send team to db
                 $existingTeam = $teamsRepository->findOneBy([
                     'userId' => 1,
                 ]);
-
-
                 if (!$existingTeam) {
                     $team = new Team();
-                    $team->addPokemonIdToList($idToAdd);
+                    $team->addPokemonIdToList($pokeId);
                     $team->setUserId(1);
                     $entityManager->persist($team);
                     $entityManager->flush();
                 } else {
                     $team = $existingTeam;
-                    $team->addPokemonIdToList($idToAdd);
+                    $team->addPokemonIdToList($pokeId);
                     $entityManager->flush();
                 }
             }
@@ -184,7 +181,6 @@ class PokemonController extends AbstractController
         return $this->render('pokemon/index.html.twig', [
             'controller_name' => 'PokemonController',
             'pokemon' => $pokemon,
-            'imgUrl' => $img,
         ]);
     }
 }

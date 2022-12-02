@@ -6,7 +6,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <img src="{{ imgUrl }}" alt="Pokemon Picture" onerror="this.src='{{ asset('img/unknown.png') }}'" />
+        <img src="{{ pokemon.img }}" alt="Pokemon Picture" onerror="this.src='{{ asset('img/unknown.png') }}'" />
       </div>
       <div class="col">
         <p>
@@ -55,7 +55,7 @@
     <div class="row">
       <div class="col">
         <form method="post">
-          <button name="pokemonId" value="{{ pokemon.pokeId }}">Add To Team</button>
+          <button name="addPokemonId" value="{{ pokemon.pokeId }}">Add To Team</button>
         </form>
       </div>
     </div>
