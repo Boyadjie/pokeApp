@@ -36,12 +36,26 @@ class TeamController extends AbstractController
 
             if (isset($_POST) && !empty($_POST)) {
                 $pokemonToRemove = $pokemonList[$_POST["removePokemonId"]];
-                $team->removePokemonIdFromTeam($_POST["removePokemonId"]);
-                unset($pokemonList[$_POST["removePokemonId"]]);
-                $entityManager->flush();
+                $oldPokemonList = $pokemonList;
 
-                // $entityManager->remove($pokemonToRemove);
-                // $entityManager->flush();
+                // Remove pokemon from team
+                $team->removePokemonIdFromTeam($_POST["removePokemonId"]);
+                $entityManager->flush();
+                unset($pokemonList[$_POST["removePokemonId"]]);
+
+                // Check if there is multiple same pokemon (like 2 pikachu or more)
+                $samePokemonsIds = [];
+                foreach ($oldPokemonList as $key => $pokemon) {
+                    if ($pokemonToRemove->getPokeId() === $pokemon->getPokeId()) {
+                        array_push($samePokemonsIds, $pokemonToRemove->getPokeId());
+                    }
+                }
+
+                // Delete the pokemon in DB only if there isn't any other same pokemon on the team.
+                if (count($samePokemonsIds) === 1) {
+                    $entityManager->remove($pokemonToRemove);
+                    $entityManager->flush();
+                }
             }
         }
 
