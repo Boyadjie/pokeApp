@@ -19,7 +19,7 @@ class PokemonController extends AbstractController
         $this->client = $client;
     }
 
-    #[Route('/pokemon', name: 'pokemons')]
+    #[Route('/pokemon', name: 'app_pokemon')]
     public function getPokemons(): Response
     {
         $response = $this->client->request(
@@ -107,7 +107,7 @@ class PokemonController extends AbstractController
         ]);
     }
 
-    #[Route('/pokemon/{name}', name: 'one_pokemon')]
+    #[Route('/pokemon/{name}', name: 'app_one_pokemon')]
     public function getOnePokemonFromApi(ManagerRegistry $doctrine, string $name = "mew"): Response
     {
         $response = $this->client->request(
@@ -175,6 +175,8 @@ class PokemonController extends AbstractController
                     $team->addPokemonIdToList($pokeId);
                     $entityManager->flush();
                 }
+
+                return $this->redirectToRoute('app_team');
             }
         }
 
