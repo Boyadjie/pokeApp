@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Pokemon;
+use App\Entity\Team;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -125,24 +126,60 @@ class PokemonController extends AbstractController
         $pokemon->setName($content["name"]);
         $pokemon->setWeight($content["weight"]);
         $pokemon->setPokeOrder($content["order"]);
-        $pokemon->setBaseExperience($content["base_experience"] || 0);
+        if ($content["base_experience"]) {
+            $pokemon->setBaseExperience($content["base_experience"]);
+        } else {
+            $pokemon->setBaseExperience(0);
+        }
         $pokemon->setTypes($content["types"]);
         $pokemon->setStats($content["stats"]);
         $pokemon->setSpecies($content["species"]);
 
         $img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" . $pokemon->getPokeId() . ".png";
 
-        // Send pokemon to db
-        // $entityManager = $doctrine->getManager();
+        if (isset($_POST) && !empty($_POST)) {
 
-        // $product = new Team();
-        // $product->setList([1, 4, 7]);
+            $idToAdd = $pokemon->getPokeId();
 
-        // // tell Doctrine you want to (eventually) save the Product (no queries yet)
-        // $entityManager->persist($product);
+            if (intval($_POST["pokemonId"]) === $idToAdd) {
 
-        // // actually executes the queries (i.e. the INSERT query)
-        // $entityManager->flush();
+                $pokemonsRepository = $doctrine->getRepository(Pokemon::class);
+                $existingPokemon = $pokemonsRepository->findOneBy([
+                    'pokeId' => $idToAdd,
+                ]);
+
+                if (!$existingPokemon) {
+                    // Send pokemon to db
+                    $entityManager = $doctrine->getManager();
+
+                    $pokemonToSend = $pokemon;
+                    // tell Doctrine you want to (eventually) save the Product (no queries yet)
+                    $entityManager->persist($pokemonToSend);
+                    // actually executes the queries (i.e. the INSERT query)
+                    $entityManager->flush();
+                }
+
+                // Add pokemon id to team
+                $teamsRepository = $doctrine->getRepository(Team::class);
+                // $teams = $teamsRepository->findAll();
+                $existingTeam = $teamsRepository->findOneBy([
+                    'userId' => 1,
+                ]);
+
+
+                if (!$existingTeam) {
+                    $team = new Team();
+                    $team->addPokemonIdToList($idToAdd);
+                    $team->setUserId(1);
+                    $entityManager->persist($team);
+                    $entityManager->flush();
+                } else {
+                    $team = $existingTeam;
+                    $team->addPokemonIdToList($idToAdd);
+                    $entityManager->flush();
+                }
+            }
+        }
 
         return $this->render('pokemon/index.html.twig', [
             'controller_name' => 'PokemonController',

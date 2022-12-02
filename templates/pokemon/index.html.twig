@@ -4,46 +4,60 @@
   <h1>{{ pokemon.name }}'s Page</h1>
 
   <div class="container">
-    <img src="{{ imgUrl }}" alt="Pokemon Picture" onerror="this.src='{{ asset('img/unknown.png') }}'" />
-    <p>
-      <b>Pokemon Id :</b> {{ pokemon.pokeId }}
-    </p>
-    <p>
-      <b>Weight :</b> {{ pokemon.weight }} Kg
-    </p>
-    <p>
-      <b>Order :</b> {{ pokemon.pokeOrder }}
-    </p>
-    <p>
-      <b>Base Xp :</b> {{ pokemon.baseExperience }} xp
-    </p>
-    <div>
-      <p>
-        <b>Types :</b>
-      </p>
-      <ul>
-        {% for type in pokemon.types %}
-          <li>{{ type.type.name }}</li>
-        {% endfor %}
-      </ul>
+    <div class="row">
+      <div class="col">
+        <img src="{{ imgUrl }}" alt="Pokemon Picture" onerror="this.src='{{ asset('img/unknown.png') }}'" />
+      </div>
+      <div class="col">
+        <p>
+          <b>Pokemon Id :</b> {{ pokemon.pokeId }}
+        </p>
+        <p>
+          <b>Weight :</b> {{ pokemon.weight }} Kg
+        </p>
+        <p>
+          <b>Order :</b> {{ pokemon.pokeOrder }}
+        </p>
+        <p>
+          <b>Base Xp :</b> {{ pokemon.baseExperience }} xp
+        </p>
+        <div>
+          <p>
+            <b>Types :</b>
+          </p>
+          <ul>
+            {% for type in pokemon.types %}
+              <li>{{ type.type.name }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <p>
+            <b>Stats :</b>
+          </p>
+          <ul>
+            {% for stat in pokemon.stats %}
+              <li>
+                <b>{{ stat.stat.name }}</b> : {{ stat.base_stat }}
+                {% if stat.effort > 0 %}
+                  | Effort : {{ stat.effort }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <p>
+          <b>Species :</b> {{ pokemon.species.name }}
+        </p>
+      </div>
     </div>
-    <div>
-      <p>
-        <b>Stats :</b>
-      </p>
-      <ul>
-        {% for stat in pokemon.stats %}
-          <li>
-            <b>{{ stat.stat.name }}</b> : {{ stat.base_stat }}
-            {% if stat.effort > 0 %}
-              | Effort : {{ stat.effort }}
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
+
+    <div class="row">
+      <div class="col">
+        <form method="post">
+          <button name="pokemonId" value="{{ pokemon.pokeId }}">Add To Team</button>
+        </form>
+      </div>
     </div>
-    <p>
-      <b>Species :</b> {{ pokemon.species.name }}
-    </p>
   </div>
 {% endblock %}
