@@ -122,19 +122,8 @@ class PokemonController extends AbstractController
         ]);
     }
 
-    #[Route('/pokemon/{name}', name: 'app_one_pokemon')]
-    public function getOnePokemonFromApi(ManagerRegistry $doctrine, string $name = "mew"): Response
+    public function setupPokemonAsClass($content)
     {
-        $response = $this->client->request(
-            'GET',
-            'https://pokeapi.co/api/v2/pokemon/' . $name,
-        );
-
-        // $statusCode = $response->getStatusCode();
-        // $contentType = $response->getHeaders()['content-type'][0];
-        $content = $response->getContent();
-        $content = $response->toArray();
-
         $pokemon = new Pokemon();
 
         $pokemon->setPokeId($content["id"]);
@@ -152,6 +141,22 @@ class PokemonController extends AbstractController
 
         $img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" . $pokemon->getPokeId() . ".png";
         $pokemon->setImg($img);
+
+        return $pokemon;
+    }
+
+    #[Route('/pokemon/{name}', name: 'app_one_pokemon')]
+    public function getOnePokemonFromApi(ManagerRegistry $doctrine, string $name = "mew"): Response
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://pokeapi.co/api/v2/pokemon/' . $name,
+        );
+
+        $content = $response->getContent();
+        $content = $response->toArray();
+
+        $pokemon = $this->setupPokemonAsClass($content);
 
         if (isset($_POST) && !empty($_POST)) {
 
