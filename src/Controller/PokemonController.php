@@ -69,7 +69,7 @@ class PokemonController extends AbstractController
         return [$pages, $currentPage, $displayList];
     }
 
-    public function search($pokemonList)
+    public function search($pokemonList, $displayList)
     {
         if (isset($_POST) && !empty($_POST)) {
             $searched = $_POST["search"];
@@ -110,7 +110,7 @@ class PokemonController extends AbstractController
         // Pages management
         [$pages, $currentPage, $displayList] = $this->managePages($pokemonList);
         // Search system
-        [$searched, $displayList] = $this->search($pokemonList);
+        [$searched, $displayList] = $this->search($pokemonList, $displayList);
 
 
         return $this->render('pokemon/search.html.twig', [
