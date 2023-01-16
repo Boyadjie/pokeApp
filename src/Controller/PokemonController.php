@@ -19,20 +19,8 @@ class PokemonController extends AbstractController
         $this->client = $client;
     }
 
-    #[Route('/pokemon', name: 'app_pokemon')]
-    public function getPokemons(): Response
+    public function formatPokemonList($content)
     {
-        $response = $this->client->request(
-            'GET',
-            'https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0',
-        );
-
-        // $statusCode = $response->getStatusCode();
-        // $contentType = $response->getHeaders()['content-type'][0];
-        $content = $response->getContent();
-        $content = $response->toArray();
-
-        // Get all the pokemons formated with name and img associated
         $pokemonList = [];
         foreach ($content["results"] as $key => $value) {
             preg_match("/([^\/]+)(?=[^\/]*\/?$)/", $value["url"], $matches);
@@ -42,11 +30,11 @@ class PokemonController extends AbstractController
             array_push($pokemonList, ["name" => $value["name"], "img" => $img]);
         }
 
+        return $pokemonList;
+    }
 
-        // -------------------------------
-        // Page Management ---------------
-        // -------------------------------
-
+    public function managePages($pokemonList)
+    {
         $pokemonPerPages = 54;
         $maxPages = ceil(count($pokemonList) / $pokemonPerPages);
         $pages = [];
@@ -78,9 +66,11 @@ class PokemonController extends AbstractController
             $currentPage = 1;
         }
 
-        // -------------------------------
-        // Search System ---------------
-        // -------------------------------
+        return [$pages, $currentPage, $displayList];
+    }
+
+    public function search($pokemonList)
+    {
         if (isset($_POST) && !empty($_POST)) {
             $searched = $_POST["search"];
             if ($searched != "" || $searched != " ") {
@@ -97,6 +87,31 @@ class PokemonController extends AbstractController
         } else {
             $searched = "";
         }
+
+        return [$searched, $displayList];
+    }
+
+    #[Route('/pokemon', name: 'app_pokemon')]
+    public function getPokemons(): Response
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0',
+        );
+
+        // $statusCode = $response->getStatusCode();
+        // $contentType = $response->getHeaders()['content-type'][0];
+        $content = $response->getContent();
+        $content = $response->toArray();
+
+        // Format api response with pokemon name and img associated
+        $pokemonList = $this->formatPokemonList($content);
+
+        // Pages management
+        [$pages, $currentPage, $displayList] = $this->managePages($pokemonList);
+        // Search system
+        [$searched, $displayList] = $this->search($pokemonList);
+
 
         return $this->render('pokemon/search.html.twig', [
             'controller_name' => 'PokemonController',
